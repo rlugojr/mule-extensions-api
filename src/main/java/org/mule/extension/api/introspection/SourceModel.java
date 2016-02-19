@@ -25,10 +25,10 @@ public interface SourceModel extends Described, EnrichableModel, InterceptableMo
     /**
      * @return a {@link DataType} representing the payload types for the generated messages
      */
-    DataType getReturnType();
+    IDataType getReturnType();
 
     /**
      * @return a {@link DataType} representing the attribute types for the generated messages
      */
-    DataType getAttributesType();
+    IDataType getAttributesType();
 }

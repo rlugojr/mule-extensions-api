@@ -15,13 +15,13 @@ import org.mule.extension.api.introspection.PoolingSupport;
  *
  * @since 1.0
  */
-public interface ConnectionHandlingTypeModelProperty
+public interface ConnectionHandlingTypeModelProperty extends APIModelProperty
 {
 
     /**
      * A unique key that identifies this property type
      */
-    public static final String KEY = ConnectionHandlingTypeModelProperty.class.getName();
+    public static final String KEY = "CONNECTION.HANDLING.TYPE";
 
     /**
      * To signal that the connection handling supports cache.

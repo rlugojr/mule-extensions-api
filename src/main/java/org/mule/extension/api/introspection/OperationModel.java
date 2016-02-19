@@ -29,6 +29,6 @@ public interface OperationModel extends Described, EnrichableModel, Interceptabl
      *
      * @return a {@link DataType}
      */
-    DataType getReturnType();
+    IDataType getReturnType();
 
 }

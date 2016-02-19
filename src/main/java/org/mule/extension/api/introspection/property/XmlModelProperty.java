@@ -12,7 +12,7 @@ package org.mule.extension.api.introspection.property;
  *
  * @since 1.0
  */
-public interface XmlModelProperty
+public interface XmlModelProperty extends APIModelProperty
 {
 
     /**

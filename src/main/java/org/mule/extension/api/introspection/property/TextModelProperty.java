@@ -11,7 +11,7 @@ package org.mule.extension.api.introspection.property;
  *
  * @since 1.0
  */
-public interface TextModelProperty
+public interface TextModelProperty extends APIModelProperty
 {
     /**
      * A unique key to identify this model property from others

@@ -11,7 +11,7 @@ package org.mule.extension.api.introspection.property;
  *
  * @since 1.0
  */
-public interface StudioModelProperty
+public interface StudioModelProperty extends APIModelProperty
 {
 
     /**

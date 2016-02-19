@@ -7,12 +7,11 @@
 package org.mule.extension.api.introspection.property;
 
 /**
- * Represents a parameterModel's capability to be masked when the user configures the value.
+ * Interface marker used to mark a model property as a property that can be serialized
  *
  * @since 1.0
  */
-public interface PasswordModelProperty extends APIModelProperty
+public interface APIModelProperty
 {
-    String KEY = "PASSWORD.MODEL.PROPERTY";
-
+    String getKey();
 }

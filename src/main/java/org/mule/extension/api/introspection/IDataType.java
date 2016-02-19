@@ -4,15 +4,15 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.extension.api.introspection.property;
+package org.mule.extension.api.introspection;
 
 /**
- * Represents a parameterModel's capability to be masked when the user configures the value.
- *
- * @since 1.0
+ * SHOULD BE REPLACED BY DATASENSE MODEL
  */
-public interface PasswordModelProperty extends APIModelProperty
+public interface IDataType
 {
-    String KEY = "PASSWORD.MODEL.PROPERTY";
-
+    String getName();
+    Class<?> getRawType();
+    IDataType[] getGenericTypes();
+    DataQualifier getQualifier();
 }

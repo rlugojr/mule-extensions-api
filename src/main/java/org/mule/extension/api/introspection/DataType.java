@@ -17,7 +17,7 @@ import java.util.Objects;
  *
  * @since 1.0
  */
-public final class DataType
+public final class DataType implements IDataType
 {
 
     private final Class<?> type;

@@ -32,7 +32,7 @@ public interface ParameterModel extends Described, EnrichableModel
      *
      * @return a not {@code null} {@link DataType}
      */
-    DataType getType();
+    IDataType getType();
 
     /**
      * Whether or not this parameter is required. This method is exclusive with
