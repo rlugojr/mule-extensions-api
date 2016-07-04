@@ -27,10 +27,14 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.mule.extensions</groupId>
+            <artifactId>mule-extensions-xml-dsl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.mule</groupId>
             <artifactId>mule-metadata-model-persistence</artifactId>
         </dependency>
-
         <dependency>
             <groupId>xerces</groupId>
             <artifactId>xercesImpl</artifactId>
@@ -56,6 +60,11 @@
             <artifactId>xmlunit</artifactId>
             <version>1.6</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.extensions</groupId>
+            <artifactId>mule-extensions-xml-dsl</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>
