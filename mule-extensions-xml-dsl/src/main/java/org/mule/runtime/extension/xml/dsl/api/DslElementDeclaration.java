@@ -9,9 +9,6 @@ package org.mule.runtime.extension.xml.dsl.api;
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.runtime.extension.api.introspection.Named;
 
-import com.google.common.collect.ImmutableList;
-
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -120,6 +117,14 @@ public class DslElementDeclaration
     public Optional<DslElementDeclaration> getChild(String name)
     {
         return Optional.ofNullable(childsByName.get(name));
+    }
+
+    public Map<MetadataType, DslElementDeclaration> getGenerics(){
+        return this.genericsDsl;
+    }
+
+    public Map<String, DslElementDeclaration> getChilds(){
+        return this.childsByName;
     }
 
 }

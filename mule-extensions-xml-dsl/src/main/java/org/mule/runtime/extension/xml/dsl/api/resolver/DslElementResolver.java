@@ -97,18 +97,30 @@ public class DslElementResolver
                         if (shouldGenerateChildElements(genericType, expressionSupport))
                         {
                             builder.supportsChildDeclaration(true);
-                            genericType.accept(getArrayItemTypeVisitor(builder, model.getName(), namespace));
+                            genericType.accept(getArrayItemTypeVisitor(builder, model.getName(), namespace, false));
                         }
                     }
 
                     @Override
                     public void visitObject(ObjectType objectType)
                     {
-                        defaultVisit(objectType);
+                        builder.withAttributeName(model.getName())
+                                .withNamespace(namespace)
+                                .withElementName(hyphenize(model.getName()));
+
                         if (shouldGenerateChildElements(objectType, expressionSupport))
                         {
-                            builder.supportsChildDeclaration(true)
-                                    .asWrappedElement(typeRequiresWrapperElement(objectType));
+                            builder.supportsChildDeclaration(true);
+
+                            if (typeRequiresWrapperElement(objectType))
+                            {
+                                builder.asWrappedElement(true)
+                                        .withNamespace(namespace);
+                            }
+                            else
+                            {
+                                builder.withNamespace(extensionXml.getNamespace());
+                            }
                         }
                     }
 
@@ -122,83 +134,102 @@ public class DslElementResolver
                         MetadataType keyType = dictionaryType.getKeyType();
                         builder.supportsChildDeclaration(shouldGenerateChildElements(keyType, expressionSupport));
 
-                        dictionaryType.getValueType().accept(getDictionaryValueTypeVisitor(model.getName(), builder, namespace));
+                        dictionaryType.getValueType().accept(getDictionaryValueTypeVisitor(builder, model.getName(), namespace));
                     }
                 }
         );
         return builder.build();
     }
 
-    private MetadataTypeVisitor getArrayItemTypeVisitor(final DslElementDeclarationBuilder builder, final String parameterName, final String namespace)
+    private MetadataTypeVisitor getArrayItemTypeVisitor(final DslElementDeclarationBuilder listBuilder, final String parameterName, final String namespace, boolean itemize)
     {
         return new MetadataTypeVisitor()
         {
             @Override
             public void visitObject(ObjectType objectType)
             {
-                builder.withGeneric(objectType, resolve(objectType, namespace));
+                listBuilder.withGeneric(objectType, resolve(objectType, namespace));
             }
 
             @Override
             public void visitArrayType(ArrayType arrayType)
             {
-                DslElementDeclarationBuilder valueBuilder = DslElementDeclarationBuilder.create()
+                DslElementDeclarationBuilder genericBuilder = DslElementDeclarationBuilder.create()
                         .withNamespace(namespace)
-                        //TODO MULE-10029 review "item" convention for List<List<?>>
-                        .withElementName(hyphenize(singularize(parameterName)).concat("-item"));
+                        .withElementName(getItemName());
 
-                builder.withGeneric(arrayType, valueBuilder.build());
+                MetadataType genericType = arrayType.getType();
+                if (shouldGenerateChildElements(genericType, SUPPORTED))
+                {
+                    genericBuilder.supportsChildDeclaration(true);
+                    genericType.accept(getArrayItemTypeVisitor(genericBuilder, parameterName, namespace, true));
+                }
+
+                listBuilder.withGeneric(arrayType, genericBuilder.build());
             }
 
             @Override
             protected void defaultVisit(MetadataType metadataType)
             {
                 //TODO MULE-10029 review convention of singular/plural
-                builder.withGeneric(metadataType,
+                listBuilder.withGeneric(metadataType,
                                     DslElementDeclarationBuilder.create()
                                             .withNamespace(namespace)
-                                            .withElementName(hyphenize(singularize(parameterName)))
+                                            .withElementName(getItemName())
                                             .build());
+            }
+
+            private String getItemName()
+            {
+                //TODO MULE-10029 review "item" convention for List<List<?>>
+                return itemize ? hyphenize(singularize(parameterName)).concat("-item")
+                               : hyphenize(singularize(parameterName));
             }
         };
     }
 
-    private MetadataTypeVisitor getDictionaryValueTypeVisitor(final String parameterName, final DslElementDeclarationBuilder builder, final String namespace)
+    private MetadataTypeVisitor getDictionaryValueTypeVisitor(final DslElementDeclarationBuilder mapBuilder, final String parameterName, final String namespace)
     {
         return new MetadataTypeVisitor()
         {
             @Override
             public void visitObject(ObjectType objectType)
             {
-                builder.withGeneric(objectType,
-                                    DslElementDeclarationBuilder.create()
-                                            //TODO broken namespace for extensible types
-                                            .withNamespace(namespace)
-                                            //TODO MULE-10029 handle subtypes for maps xml generation (not required for parsers)
-                                            .withElementName(hyphenize(singularize(parameterName)))
-                                            .supportsChildDeclaration(shouldGenerateChildElements(objectType, SUPPORTED))
-                                            .build());
+                mapBuilder.withGeneric(objectType,
+                                       DslElementDeclarationBuilder.create()
+                                               //TODO broken namespace for extensible types
+                                               .withNamespace(namespace)
+                                               //TODO MULE-10029 handle subtypes for maps xml generation (not required for parsers)
+                                               .withElementName(hyphenize(singularize(parameterName)))
+                                               .supportsChildDeclaration(shouldGenerateChildElements(objectType, SUPPORTED))
+                                               .build());
             }
 
             @Override
             public void visitArrayType(ArrayType arrayType)
             {
-                builder.withGeneric(arrayType,
-                                    DslElementDeclarationBuilder.create()
-                                            .withNamespace(namespace)
-                                            //TODO MULE-10029 review "item" convention for Map<?, List>
-                                            .withElementName(hyphenize(singularize(parameterName)).concat("-item"))
-                                            .build());
+                DslElementDeclarationBuilder listBuilder = DslElementDeclarationBuilder.create()
+                        .withNamespace(namespace)
+                        .withElementName(hyphenize(singularize(parameterName)));
+
+                MetadataType genericType = arrayType.getType();
+                if (shouldGenerateChildElements(genericType, SUPPORTED))
+                {
+                    listBuilder.supportsChildDeclaration(true);
+                    genericType.accept(getArrayItemTypeVisitor(listBuilder, parameterName, namespace, true));
+                }
+
+                mapBuilder.withGeneric(arrayType, listBuilder.build());
             }
 
             @Override
             protected void defaultVisit(MetadataType metadataType)
             {
-                builder.withGeneric(metadataType,
-                                    DslElementDeclarationBuilder.create()
-                                            .withNamespace(namespace)
-                                            .withElementName(hyphenize(singularize(parameterName)))
-                                            .build());
+                mapBuilder.withGeneric(metadataType,
+                                       DslElementDeclarationBuilder.create()
+                                               .withNamespace(namespace)
+                                               .withElementName(hyphenize(singularize(parameterName)))
+                                               .build());
             }
         };
     }
@@ -239,14 +270,14 @@ public class DslElementResolver
         return builder.build();
     }
 
-    private MetadataTypeVisitor getObjectFieldVisitor(final DslElementDeclarationBuilder builder, final String fieldName, final String ownerNamespace)
+    private MetadataTypeVisitor getObjectFieldVisitor(final DslElementDeclarationBuilder fieldBuilder, final String fieldName, final String ownerNamespace)
     {
         return new MetadataTypeVisitor()
         {
             @Override
             public void visitObject(ObjectType objectType)
             {
-                builder.withNamespace(ownerNamespace)
+                fieldBuilder.withNamespace(ownerNamespace)
                         .withElementName(hyphenize(fieldName))
                         .supportsChildDeclaration(shouldGenerateChildElements(objectType, ExpressionSupport.SUPPORTED));
 
@@ -257,34 +288,34 @@ public class DslElementResolver
                                     DslElementDeclarationBuilder fieldBuilder = DslElementDeclarationBuilder.create();
                                     String childName = field.getKey().getName().getLocalPart();
                                     field.getValue().accept(getObjectFieldVisitor(fieldBuilder, childName, ownerNamespace));
-                                    builder.withChild(childName, fieldBuilder.build());
+                                    fieldBuilder.withChild(childName, fieldBuilder.build());
                                 });
             }
 
             @Override
             public void visitArrayType(ArrayType arrayType)
             {
-                builder.withNamespace(ownerNamespace)
+                fieldBuilder.withNamespace(ownerNamespace)
                         .withElementName(hyphenize(pluralize(fieldName)));
 
                 MetadataType genericType = arrayType.getType();
                 if (shouldGenerateChildElements(genericType, ExpressionSupport.SUPPORTED))
                 {
-                    builder.supportsChildDeclaration(true);
-                    genericType.accept(getArrayItemTypeVisitor(builder, fieldName, ownerNamespace));
+                    fieldBuilder.supportsChildDeclaration(true);
+                    genericType.accept(getArrayItemTypeVisitor(fieldBuilder, fieldName, ownerNamespace, false));
                 }
             }
 
             @Override
             public void visitDictionary(DictionaryType dictionaryType)
             {
-                builder.withNamespace(ownerNamespace)
+                fieldBuilder.withNamespace(ownerNamespace)
                         .withElementName(hyphenize(pluralize(fieldName)));
 
                 MetadataType keyType = dictionaryType.getKeyType();
-                builder.supportsChildDeclaration(shouldGenerateChildElements(keyType, ExpressionSupport.SUPPORTED));
+                fieldBuilder.supportsChildDeclaration(shouldGenerateChildElements(keyType, ExpressionSupport.SUPPORTED));
 
-                dictionaryType.getValueType().accept(getDictionaryValueTypeVisitor(fieldName, builder, ownerNamespace));
+                dictionaryType.getValueType().accept(getDictionaryValueTypeVisitor(fieldBuilder, fieldName, ownerNamespace));
             }
         };
     }
