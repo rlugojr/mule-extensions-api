@@ -27,7 +27,6 @@ public class DslElementDeclaration
     private final boolean isWrapped;
     private final boolean supportsChildDeclaration;
 
-    //private final List<DslElementDeclaration> genericsDsl;
     private final Map<MetadataType, DslElementDeclaration> genericsDsl;
     private final Map<String, DslElementDeclaration> childsByName;
 
@@ -99,18 +98,8 @@ public class DslElementDeclaration
         return supportsChildDeclaration;
     }
 
-    ///**
-    // * @return the {@link DslElementDeclaration declaration} of this element's child element, if
-    // * one exists, otherwise returns {@link Optional#empty}.
-    // */
-    //public Optional<DslElementDeclaration> getInnerElement()
-    //{
-    //    return Optional.ofNullable(innerElement);
-    //}
-
     public Optional<DslElementDeclaration> getGeneric(MetadataType type)
     {
-        //return ImmutableList.copyOf(genericsDsl);
         return Optional.ofNullable(genericsDsl.get(type));
     }
 
