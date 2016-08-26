@@ -1,34 +1,52 @@
 {
-  "failures": [],
-  "keys": [
-    {
-      "id": "firstKey",
-      "displayName": "firstKey",
-      "partName": "",
-      "properties": {},
-      "childs": [
-        {
-          "id": "firstChild",
-          "displayName": "firstChild",
-          "partName": "",
-          "properties": {},
-          "childs": []
+  "failures": [
+
+  ],
+  "keys": {
+    "TestMetadataKeyResolver": [
+      {
+        "id": "firstKey",
+        "displayName": "firstKey",
+        "partName": "",
+        "properties": {
+
         },
-        {
-          "id": "secondChild",
-          "displayName": "secondChild",
-          "partName": "",
-          "properties": {},
-          "childs": []
-        }
-      ]
-    },
-    {
-      "id": "secondKey",
-      "displayName": "secondKey",
-      "partName": "",
-      "properties": {},
-      "childs": []
-    }
-  ]
+        "childs": [
+          {
+            "id": "firstChild",
+            "displayName": "firstChild",
+            "partName": "",
+            "properties": {
+
+            },
+            "childs": [
+
+            ]
+          },
+          {
+            "id": "secondChild",
+            "displayName": "secondChild",
+            "partName": "",
+            "properties": {
+
+            },
+            "childs": [
+
+            ]
+          }
+        ]
+      },
+      {
+        "id": "secondKey",
+        "displayName": "secondKey",
+        "partName": "",
+        "properties": {
+
+        },
+        "childs": [
+
+        ]
+      }
+    ]
+  }
 }

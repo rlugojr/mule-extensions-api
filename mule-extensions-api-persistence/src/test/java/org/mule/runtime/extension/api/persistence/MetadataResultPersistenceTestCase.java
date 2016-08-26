@@ -15,8 +15,9 @@ import static org.mule.runtime.api.metadata.resolving.MetadataResult.failure;
 import static org.mule.runtime.api.metadata.resolving.MetadataResult.success;
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.metadata.java.api.JavaTypeLoader;
-import org.mule.runtime.api.metadata.DefaultMetadataKey;
 import org.mule.runtime.api.metadata.MetadataKey;
+import org.mule.runtime.api.metadata.MetadataKeysContainer;
+import org.mule.runtime.api.metadata.MetadataKeysContainerBuilder;
 import org.mule.runtime.api.metadata.descriptor.ComponentMetadataDescriptor;
 import org.mule.runtime.api.metadata.descriptor.ImmutableComponentMetadataDescriptor;
 import org.mule.runtime.api.metadata.descriptor.ImmutableOutputMetadataDescriptor;
@@ -56,6 +57,7 @@ public class MetadataResultPersistenceTestCase extends BasePersistenceTestCase {
   private static final String FIRST_CHILD = "firstChild";
   private static final String SECOND_CHILD = "secondChild";
   private static final String METADATA_CONTENT_FAILURE = "Metadata Content Failure Error";
+  public static final String TEST_METADATA_KEY_RESOLVER = "TestMetadataKeyResolver";
 
   private ComponentMetadataDescriptor operationMetadataDescriptor;
   private MetadataKeysResultJsonSerializer keysResultSerializer = new MetadataKeysResultJsonSerializer(true);
@@ -76,10 +78,13 @@ public class MetadataResultPersistenceTestCase extends BasePersistenceTestCase {
   @Test
   public void serializeSuccessMetadataKeysResult() throws IOException {
     Set<MetadataKey> keys = new LinkedHashSet<>();
+    MetadataKeysContainerBuilder builder = new MetadataKeysContainerBuilder();
+
     keys.add(newKey(FIRST_KEY_ID).build());
     keys.add(newKey(SECOND_KEY_ID).build());
+    builder.add(TEST_METADATA_KEY_RESOLVER, keys);
 
-    String serialized = keysResultSerializer.serialize(success(keys));
+    String serialized = keysResultSerializer.serialize(success(builder.build()));
     assertSerializedJson(serialized, METADATA_KEYS_RESULT_JSON);
   }
 
@@ -88,15 +93,19 @@ public class MetadataResultPersistenceTestCase extends BasePersistenceTestCase {
     Set<MetadataKey> keys = new LinkedHashSet<>();
     keys.add(newKey(FIRST_KEY_ID).withChild(newKey(FIRST_CHILD)).withChild(newKey(SECOND_CHILD)).build());
     keys.add(newKey(SECOND_KEY_ID).build());
+    MetadataKeysContainerBuilder builder = new MetadataKeysContainerBuilder();
+    builder.add(TEST_METADATA_KEY_RESOLVER, keys);
 
-    String serialized = keysResultSerializer.serialize(success(keys));
+    String serialized = keysResultSerializer.serialize(success(builder.build()));
     assertSerializedJson(serialized, METADATA_MULTILEVEL_KEYS_RESULT_JSON);
   }
 
   @Test
   public void serializeFailureMultilevelMetadataKeyResult() throws IOException {
-    String serialized = keysResultSerializer.serialize(failure(new LinkedHashSet<MetadataKey>(), METADATA_RESULT_ERROR_MESSAGE,
-                                                               NOT_AUTHORIZED, METADATA_RESULT_ERROR_MESSAGE));
+    MetadataKeysContainerBuilder builder = new MetadataKeysContainerBuilder();
+    String serialized = keysResultSerializer
+        .serialize(failure(builder.add(TEST_METADATA_KEY_RESOLVER, new LinkedHashSet<>()).build(), METADATA_RESULT_ERROR_MESSAGE,
+                           NOT_AUTHORIZED, METADATA_RESULT_ERROR_MESSAGE));
     assertSerializedJson(serialized, METADATA_KEYS_RESULT_FAILURE_JSON);
   }
 
@@ -129,11 +138,12 @@ public class MetadataResultPersistenceTestCase extends BasePersistenceTestCase {
   @Test
   public void deserializeMetadataKeysResult() throws IOException {
     String resource = getResourceAsString(METADATA_KEYS_RESULT_JSON);
-    ImmutableMetadataResult<Set<DefaultMetadataKey>> metadataResult = keysResultSerializer.deserialize(resource);
-
+    ImmutableMetadataResult<MetadataKeysContainer> metadataResult = keysResultSerializer.deserialize(resource);
     assertThat(metadataResult.isSuccess(), is(true));
-    assertThat(metadataResult.get().size(), is(2));
-    Iterator<DefaultMetadataKey> iterator = metadataResult.get().iterator();
+    Optional<Set<MetadataKey>> keys = metadataResult.get().getKeys(TEST_METADATA_KEY_RESOLVER);
+    assertThat(keys.isPresent(), is(true));
+    assertThat(keys.get().size(), is(2));
+    Iterator<MetadataKey> iterator = keys.get().iterator();
     assertThat(iterator.next().getDisplayName(), is(FIRST_KEY_ID));
     assertThat(iterator.next().getDisplayName(), is(SECOND_KEY_ID));
   }
@@ -154,7 +164,7 @@ public class MetadataResultPersistenceTestCase extends BasePersistenceTestCase {
   @Test
   public void deserializeFailureKeysResult() throws IOException {
     String resource = getResourceAsString(METADATA_KEYS_RESULT_FAILURE_JSON);
-    ImmutableMetadataResult<Set<DefaultMetadataKey>> metadataResult = keysResultSerializer.deserialize(resource);
+    ImmutableMetadataResult<MetadataKeysContainer> metadataResult = keysResultSerializer.deserialize(resource);
 
     assertThat(metadataResult.isSuccess(), is(false));
     assertThat(metadataResult.getFailure().isPresent(), is(true));

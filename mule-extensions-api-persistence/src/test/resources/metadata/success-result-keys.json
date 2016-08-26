@@ -1,19 +1,31 @@
 {
-  "failures": [],
-  "keys": [
-    {
-      "id": "firstKey",
-      "displayName": "firstKey",
-      "partName": "",
-      "properties": {},
-      "childs": []
-    },
-    {
-      "id": "secondKey",
-      "displayName": "secondKey",
-      "partName": "",
-      "properties": {},
-      "childs": []
-    }
-  ]
+  "failures": [
+
+  ],
+  "keys": {
+    "TestMetadataKeyResolver": [
+      {
+        "id": "firstKey",
+        "displayName": "firstKey",
+        "partName": "",
+        "properties": {
+
+        },
+        "childs": [
+
+        ]
+      },
+      {
+        "id": "secondKey",
+        "displayName": "secondKey",
+        "partName": "",
+        "properties": {
+
+        },
+        "childs": [
+
+        ]
+      }
+    ]
+  }
 }

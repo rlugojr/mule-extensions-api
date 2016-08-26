@@ -11,14 +11,18 @@ import static java.util.Collections.singletonList;
 import static org.mule.runtime.api.metadata.resolving.MetadataResult.failure;
 import static org.mule.runtime.api.metadata.resolving.MetadataResult.success;
 import org.mule.runtime.api.metadata.DefaultMetadataKey;
+import org.mule.runtime.api.metadata.MetadataKeysContainer;
+import org.mule.runtime.api.metadata.MetadataKeysContainerBuilder;
 import org.mule.runtime.api.metadata.resolving.MetadataResult;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
- * Data transfer object that carries data that represents a {@link MetadataResult} of a {@link DefaultMetadataKey}
- * and enables the ease of serialization an deserialization.
+ * Data transfer object that carries data that represents a {@link MetadataResult} of a {@link DefaultMetadataKey} and enables the
+ * ease of serialization an deserialization.
  *
  * @since 1.0
  */
@@ -27,20 +31,32 @@ public class MetadataKeysResult {
   private final static String KEYS = "KEYS";
 
   private final List<Failure> failures;
-  private final Set<DefaultMetadataKey> keys;
+  private final Map<String, Set<DefaultMetadataKey>> keys;
 
-  public MetadataKeysResult(MetadataResult<Set<DefaultMetadataKey>> result) {
+  public MetadataKeysResult(MetadataResult<MetadataKeysContainer> result) {
     this.failures = result.isSuccess() ? emptyList()
         : singletonList(new Failure(result.getFailure().get(), KEYS));
-    this.keys = result.get();
+    this.keys = containerToMap(result.get());
   }
 
-  public MetadataResult<Set<DefaultMetadataKey>> toKeysMetadataResult() {
+  public MetadataResult<MetadataKeysContainer> toKeysMetadataResult() {
+    MetadataKeysContainer container = mapToContainer(keys);
     if (!failures.isEmpty()) {
       Failure metadataFailure = failures.get(0);
-      return failure(keys, metadataFailure.getMessage(), metadataFailure.getFailureCode(), metadataFailure.getReason());
+      return failure(container, metadataFailure.getMessage(), metadataFailure.getFailureCode(), metadataFailure.getReason());
     }
 
-    return success(keys);
+    return success(container);
+  }
+
+  private Map<String, Set<DefaultMetadataKey>> containerToMap(MetadataKeysContainer container) {
+    return container.getResolvers().stream()
+        .collect(Collectors.toMap(resolver -> resolver, resolver -> (Set) container.getKeys(resolver).get()));
+  }
+
+  private MetadataKeysContainer mapToContainer(Map<String, Set<DefaultMetadataKey>> map) {
+    MetadataKeysContainerBuilder builder = new MetadataKeysContainerBuilder();
+    map.entrySet().stream().forEach(entry -> builder.add(entry.getKey(), (Set) entry.getValue()));
+    return builder.build();
   }
 }

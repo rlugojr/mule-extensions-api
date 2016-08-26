@@ -7,5 +7,5 @@
       "failureComponent": "KEYS"
     }
   ],
-  "keys": []
+  "keys": {"TestMetadataKeyResolver":[]}
 }
