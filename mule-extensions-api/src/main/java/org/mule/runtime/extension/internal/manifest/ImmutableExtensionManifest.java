@@ -33,20 +33,27 @@ public final class ImmutableExtensionManifest implements ExtensionManifest {
   private final List<String> exportedResources;
   private final DescriberManifest describerManifest;
   private final MuleVersion minMuleVersion;
+  private final List<String> pluginDependencies;
 
   /**
    * Creates a new instance
    *
-   * @param name              the extension's name
-   * @param description       the extension's description
-   * @param version           the extension's version
-   * @param minMuleVersion    the extension's min Mule version
-   * @param exportedPackages  the extension's exported package names
-   * @param exportedResources the extension's exported resource paths
-   * @param describerManifest the extension's {@link DescriberManifest}
+   * @param name               the extension's name
+   * @param description        the extension's description
+   * @param version            the extension's version
+   * @param minMuleVersion     the extension's min Mule version
+   * @param exportedPackages   the extension's exported package names
+   * @param exportedResources  the extension's exported resource paths
+   * @param pluginDependencies the extension's plugin dependencies
+   * @param describerManifest  the extension's {@link DescriberManifest}
    */
-  public ImmutableExtensionManifest(String name, String description, String version, MuleVersion minMuleVersion,
-                                    List<String> exportedPackages, List<String> exportedResources,
+  public ImmutableExtensionManifest(String name,
+                                    String description,
+                                    String version,
+                                    MuleVersion minMuleVersion,
+                                    List<String> exportedPackages,
+                                    List<String> exportedResources,
+                                    List<String> pluginDependencies,
                                     DescriberManifest describerManifest) {
     checkNotBlank(name, "name");
     checkNotBlank(version, "version");
@@ -58,6 +65,7 @@ public final class ImmutableExtensionManifest implements ExtensionManifest {
     this.describerManifest = describerManifest;
     this.exportedPackages = immutable(exportedPackages);
     this.exportedResources = immutable(exportedResources);
+    this.pluginDependencies = immutable(pluginDependencies);
   }
 
   /**
@@ -114,6 +122,14 @@ public final class ImmutableExtensionManifest implements ExtensionManifest {
   @Override
   public List<String> getExportedResources() {
     return exportedResources;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public List<String> getPluginDependencies() {
+    return pluginDependencies;
   }
 
   private void checkNotBlank(String value, String attributeName) {

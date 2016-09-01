@@ -47,4 +47,9 @@ public interface ExtensionManifest extends Named, Described {
    * @return The {@link List} of resources paths that the extension exposes
    */
   List<String> getExportedResources();
+
+  /**
+   * @return The {@link List} of plugins that the extension is dependant on.
+   */
+  List<String> getPluginDependencies();
 }

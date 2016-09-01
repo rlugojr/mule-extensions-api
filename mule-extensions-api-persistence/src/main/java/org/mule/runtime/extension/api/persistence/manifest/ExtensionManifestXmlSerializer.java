@@ -45,6 +45,7 @@ public final class ExtensionManifestXmlSerializer {
     xmlManifest.setMinMuleVersion(manifest.getMinMuleVersion());
     xmlManifest.setExportedPackages(manifest.getExportedPackages());
     xmlManifest.setExportedResources(manifest.getExportedResources());
+    xmlManifest.setPluginDependencies(manifest.getPluginDependencies());
     xmlManifest.setDescriberManifest(asXml(manifest.getDescriberManifest()));
 
     try {

@@ -12,6 +12,7 @@
         <resource>/META-INF/foo</resource>
         <resource>bar</resource>
     </exportedResources>
+    <pluginDependencies/>
     <describer>
         <id>annotations</id>
         <properties>

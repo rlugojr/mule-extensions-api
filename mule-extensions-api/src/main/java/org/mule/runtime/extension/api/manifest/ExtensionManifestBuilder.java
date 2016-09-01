@@ -31,6 +31,7 @@ public final class ExtensionManifestBuilder {
   private MuleVersion minMuleVersion;
   private List<String> exportedPackages = new LinkedList<>();
   private List<String> exportedResources = new LinkedList<>();
+  private List<String> pluginDependencies = new LinkedList<>();
   private final DescriberManifestBuilder describerManifestBuilder = new DescriberManifestBuilder();
 
   /**
@@ -64,6 +65,18 @@ public final class ExtensionManifestBuilder {
    */
   public ExtensionManifestBuilder addExportedPackages(Collection<String> packages) {
     exportedPackages.addAll(packages);
+    return this;
+  }
+
+  /**
+   * Adds the given {@code dependencies} names to the list of
+   * plugin dependencies packages
+   *
+   * @param dependencies a {@link List} with plugin dependencies names.
+   * @return {@code this} builder
+   */
+  public ExtensionManifestBuilder addPluginDependencies(Collection<String> dependencies) {
+    pluginDependencies.addAll(dependencies);
     return this;
   }
 
@@ -121,7 +134,13 @@ public final class ExtensionManifestBuilder {
    * @throws IllegalStateException is {@link #setName(String)} or {@link #setVersion(String)} were never invoked or used with a blank value
    */
   public ExtensionManifest build() {
-    return new ImmutableExtensionManifest(name, description, version, minMuleVersion, exportedPackages, exportedResources,
+    return new ImmutableExtensionManifest(name,
+                                          description,
+                                          version,
+                                          minMuleVersion,
+                                          exportedPackages,
+                                          exportedResources,
+                                          pluginDependencies,
                                           describerManifestBuilder.build());
   }
 

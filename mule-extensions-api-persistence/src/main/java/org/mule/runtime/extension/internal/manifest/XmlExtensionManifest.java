@@ -52,6 +52,10 @@ public final class XmlExtensionManifest implements ExtensionManifest {
   @XmlElement(name = "resource")
   private List<String> exportedResources = new ArrayList<>();
 
+  @XmlElementWrapper(name = "pluginDependencies")
+  @XmlElement(name = "pluginDependency")
+  private List<String> pluginDependencies = new ArrayList<>();
+
   @XmlElement(name = "describer")
   private XmlDescriberManifest describerManifest;
 
@@ -112,6 +116,15 @@ public final class XmlExtensionManifest implements ExtensionManifest {
   @Override
   public List<String> getExportedResources() {
     return exportedResources;
+  }
+
+  @Override
+  public List<String> getPluginDependencies() {
+    return pluginDependencies;
+  }
+
+  public void setPluginDependencies(List<String> pluginDependencies) {
+    this.pluginDependencies = pluginDependencies;
   }
 
   public void setExportedResources(List<String> exportedResources) {
