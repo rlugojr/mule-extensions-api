@@ -10,17 +10,24 @@ import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.api.meta.model.parameter.ParameterRole.PRIMARY_CONTENT;
+import static org.mule.runtime.extension.api.util.ExtensionMetadataTypeUtils.getId;
 import static org.mule.runtime.extension.api.util.NameUtils.getComponentModelTypeName;
+import org.mule.metadata.api.model.ObjectType;
+import org.mule.metadata.api.utils.MetadataTypeUtils;
+import org.mule.metadata.api.visitor.MetadataTypeVisitor;
+import org.mule.runtime.api.meta.NamedObject;
 import org.mule.runtime.api.meta.model.ExtensionModel;
 import org.mule.runtime.api.meta.model.config.ConfigurationModel;
 import org.mule.runtime.api.meta.model.connection.ConnectionProviderModel;
 import org.mule.runtime.api.meta.model.operation.OperationModel;
+import org.mule.runtime.api.meta.model.parameter.ParameterGroupModel;
 import org.mule.runtime.api.meta.model.parameter.ParameterModel;
 import org.mule.runtime.api.meta.model.parameter.ParameterRole;
 import org.mule.runtime.api.meta.model.parameter.ParameterizedModel;
 import org.mule.runtime.api.meta.model.source.SourceModel;
 import org.mule.runtime.api.meta.model.util.IdempotentExtensionWalker;
 import org.mule.runtime.extension.api.annotation.param.Optional;
+import org.mule.runtime.extension.api.declaration.type.TypeUtils;
 import org.mule.runtime.extension.api.loader.ExtensionModelValidator;
 import org.mule.runtime.extension.api.loader.Problem;
 import org.mule.runtime.extension.api.loader.ProblemsReporter;
@@ -69,6 +76,27 @@ public class ContentParameterModelValidator implements ExtensionModelValidator {
       @Override
       protected void onSource(SourceModel model) {
         validateContent(model, problemsReporter);
+      }
+
+      @Override
+      protected void onParameter(ParameterGroupModel groupModel, ParameterModel model) {
+        model.getType().accept(new MetadataTypeVisitor() {
+
+          @Override
+          public void visitObject(ObjectType objectType) {
+            final List<String> contentFields = objectType.getFields().stream()
+                .filter(TypeUtils::isContent)
+                .map(MetadataTypeUtils::getLocalPart)
+                .collect(toList());
+
+            if (!contentFields.isEmpty()) {
+              problemsReporter.addError(new Problem(model, String
+                  .format("Parameter '%s' of type '%s' in group '%s' contains content fields: [%s]. Content fields are not allowed in complex types.",
+                          model.getName(), getId(objectType), groupModel.getName(), Joiner.on(", ").join(contentFields))));
+            }
+
+          }
+        });
       }
     }.walk(extensionModel);
   }
@@ -120,7 +148,7 @@ public class ContentParameterModelValidator implements ExtensionModelValidator {
     }
   }
 
-  private Problem problem(ParameterizedModel model, String message) {
+  private Problem problem(NamedObject model, String message) {
     return new Problem(model, String.format("'%s' %s %s ",
                                             getComponentModelTypeName(model),
                                             model.getName(),
