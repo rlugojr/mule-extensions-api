@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mule.extensions</groupId>
     <artifactId>mule-extensions-api-parent</artifactId>
-    <version>1.0.0-M5-RC-TEST-RELEASE</version>
+    <version>1.0.0-M5-RC-TEST-RELEASE-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Mule Extensions API Parent</name>
     <description>Parent POM for Mule Extensions API modules</description>
@@ -106,7 +106,7 @@
         <connection>scm:git:git://github.com/mulesoft/mule-extensions-api.git</connection>
         <developerConnection>scm:git:git@github.com:mulesoft/mule-extensions-api.git</developerConnection>
         <url>https://github.com/mulesoft/mule-extensions-api</url>
-      <tag>1.0.0-M5-RC-TEST-RELEASE</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <properties>
