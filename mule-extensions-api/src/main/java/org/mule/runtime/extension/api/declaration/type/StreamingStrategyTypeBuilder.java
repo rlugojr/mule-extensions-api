@@ -26,6 +26,10 @@ import org.mule.runtime.extension.api.declaration.type.annotation.TypeAliasAnnot
  */
 public final class StreamingStrategyTypeBuilder extends InfrastructureTypeBuilder {
 
+  public static final String REPEATABLE_FILE_STORE_STREAM_ALIAS = "repeatable-file-store-stream";
+  public static final String REPEATABLE_IN_MEMORY_STREAM_ALIAS = "repeatable-in-memory-stream";
+  public static final String IN_MEMORY_STREAM_ALIAS = "in-memory-stream";
+
   /**
    * @return a {@link MetadataType} representation of a retry policy
    */
@@ -37,7 +41,7 @@ public final class StreamingStrategyTypeBuilder extends InfrastructureTypeBuilde
         .of(getNoStreamingStrategy(typeBuilder))
         .of(getFileStoreStrategy(typeBuilder))
         .id(Object.class.getName())
-        .with(new TypeAliasAnnotation("ReconnectionStrategy"))
+        .with(new TypeAliasAnnotation("StreamingStrategy"))
         .with(new InfrastructureTypeAnnotation())
         .build();
   }
@@ -45,7 +49,7 @@ public final class StreamingStrategyTypeBuilder extends InfrastructureTypeBuilde
   private MetadataType getFileStoreStrategy(BaseTypeBuilder typeBuilder) {
     ObjectTypeBuilder streamingType = typeBuilder.objectType()
         .id(Object.class.getName())
-        .with(new TypeAliasAnnotation("repeatable-file-store-stream"))
+        .with(new TypeAliasAnnotation(REPEATABLE_FILE_STORE_STREAM_ALIAS))
         .with(new InfrastructureTypeAnnotation());
 
     addIntField(streamingType, typeBuilder, "maxInMemorySize",
@@ -62,7 +66,7 @@ public final class StreamingStrategyTypeBuilder extends InfrastructureTypeBuilde
   private MetadataType getInMemoryStrategy(BaseTypeBuilder typeBuilder) {
     ObjectTypeBuilder streamingType = typeBuilder.objectType()
         .id(Object.class.getName())
-        .with(new TypeAliasAnnotation("repeatable-in-memory-stream"))
+        .with(new TypeAliasAnnotation(REPEATABLE_IN_MEMORY_STREAM_ALIAS))
         .with(new InfrastructureTypeAnnotation());
 
     addIntField(streamingType, typeBuilder, "initialBufferSize",
@@ -97,7 +101,7 @@ public final class StreamingStrategyTypeBuilder extends InfrastructureTypeBuilde
   private MetadataType getNoStreamingStrategy(BaseTypeBuilder typeBuilder) {
     return typeBuilder.objectType()
         .id(Object.class.getName())
-        .with(new TypeAliasAnnotation("in-memory-stream"))
+        .with(new TypeAliasAnnotation(IN_MEMORY_STREAM_ALIAS))
         .with(new InfrastructureTypeAnnotation())
         .description("This configuration allows the input stream to be read only once. It will not allow to seek randomly " +
             "which will limit the transformations that DW can perform on this stream. " +
