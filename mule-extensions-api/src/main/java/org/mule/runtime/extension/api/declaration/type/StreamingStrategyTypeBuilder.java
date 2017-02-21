@@ -52,7 +52,7 @@ public final class StreamingStrategyTypeBuilder extends InfrastructureTypeBuilde
                 "Defines the maximum memory that the stream should use to keep data in memory. If more than that is consumed then "
                     +
                     "it will start to buffer the content on disk.",
-                DEFAULT_STREAMING_MAX_BUFFER_SIZE);
+                DEFAULT_STREAMING_MAX_BUFFER_SIZE, false);
 
     addDataUnitField(typeBuilder, streamingType, "The unit in which maxInMemorySize is expressed");
 
@@ -69,18 +69,18 @@ public final class StreamingStrategyTypeBuilder extends InfrastructureTypeBuilde
                 "This is the amount of memory that will be allocated in order to consume the stream and provide random "
                     + "access to it. If the stream contains more data than can be fit into this buffer, then it will be expanded "
                     + "by according to the bufferSizeIncrement attribute, with an upper limit of maxInMemorySize.",
-                DEFAULT_STREAMING_BUFFER_SIZE);
+                DEFAULT_STREAMING_BUFFER_SIZE, false);
 
     addIntField(streamingType, typeBuilder, "bufferSizeIncrement",
                 "This is by how much will be buffer size by expanded if it exceeds its initial size. Setting a value of zero or "
                     + "lower will mean that the buffer should not expand, meaning that a STREAM_MAXIMUM_SIZE_EXCEEDED error will be raised "
                     + "when the buffer gets full.",
-                DEFAULT_STREAMING_BUFFER_SIZE);
+                DEFAULT_STREAMING_BUFFER_SIZE, false);
 
     addIntField(streamingType, typeBuilder, "maxInMemorySize",
                 "This is the maximum amount of memory that will be used. If more than that is used then a STREAM_MAXIMUM_SIZE_EXCEEDED error will be raised. "
                     + "A value lower or equal to zero means no limit.",
-                0);
+                0, false);
 
 
     addDataUnitField(typeBuilder, streamingType, "The unit in which all these attributes are expressed");
@@ -90,7 +90,7 @@ public final class StreamingStrategyTypeBuilder extends InfrastructureTypeBuilde
 
   private void addDataUnitField(BaseTypeBuilder typeBuilder, ObjectTypeBuilder streamingType, String description) {
     addEnumField(streamingType, typeBuilder, "bufferUnit", description,
-                 DEFAULT_STREAMING_BUFFER_DATA_UNIT.name(),
+                 DEFAULT_STREAMING_BUFFER_DATA_UNIT.name(), false,
                  stream(DataUnit.values()).map(unit -> unit.name()).toArray(String[]::new));
   }
 

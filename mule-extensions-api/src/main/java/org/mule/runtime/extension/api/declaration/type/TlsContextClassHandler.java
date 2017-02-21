@@ -54,10 +54,10 @@ final class TlsContextClassHandler extends InfrastructureTypeBuilder implements 
     type.with(new TypeAliasAnnotation("Tls"));
     type.with(new InfrastructureTypeAnnotation());
     addStringField(type, typeBuilder, "enabledProtocols",
-                   "A comma separated list of protocols enabled for this context.", null);
+                   "A comma separated list of protocols enabled for this context.", null, false);
     addStringField(type, typeBuilder, "enabledCipherSuites",
                    "A comma separated list of cipher suites enabled for this context.",
-                   null);
+                   null, false);
 
     addTrustStoreField(typeBuilder, type);
     addKeyStoreField(typeBuilder, type);
@@ -73,14 +73,15 @@ final class TlsContextClassHandler extends InfrastructureTypeBuilder implements 
             + "trusted servers. If used server side, it contains the certificates of the trusted clients.");
     typeBuilder = create(JAVA);
     addStringField(trustStoreType, typeBuilder, "path", "The location (which will be resolved relative to the current "
-        + "classpath and file system, if possible) of the trust store.", null);
+        + "classpath and file system, if possible) of the trust store.", null, false);
 
-    addStringField(trustStoreType, typeBuilder, "password", "The password used to protect the trust store.", null);
-    addField(trustStoreType, getStoreMetadataType(typeBuilder), "type", "The type of store used.");
+    addStringField(trustStoreType, typeBuilder, "password", "The password used to protect the trust store.", null, false);
+    addField(trustStoreType, getStoreMetadataType(typeBuilder), "type", "The type of store used.", false);
 
-    addStringField(trustStoreType, typeBuilder, "algorithm", "The algorithm used by the trust store.", null);
+    addStringField(trustStoreType, typeBuilder, "algorithm", "The algorithm used by the trust store.", null, false);
 
-    addBooleanField(trustStoreType, typeBuilder, "insecure", "If true, no certificate validations will be performed.", false);
+    addBooleanField(trustStoreType, typeBuilder, "insecure", "If true, no certificate validations will be performed.", false,
+                    false);
 
     type.addField().key("trust-store").required(false).value(trustStoreType);
   }
@@ -98,17 +99,17 @@ final class TlsContextClassHandler extends InfrastructureTypeBuilder implements 
         .description("Key store configuration. The key store contains the keys of this server/client.");
 
     addStringField(keyStoreType, typeBuilder, "path", "The location (which will be resolved relative to the current "
-        + "classpath and file system, if possible) of the key store.", null);
+        + "classpath and file system, if possible) of the key store.", null, false);
 
-    addField(keyStoreType, getStoreMetadataType(typeBuilder), "type", "The type of store used.");
+    addField(keyStoreType, getStoreMetadataType(typeBuilder), "type", "The type of store used.", false);
     addStringField(keyStoreType, typeBuilder, "alias",
                    "When the key store contains many private keys, this attribute indicates the alias of the key that "
                        + "should be used. If not defined, the first key in the file will be used by default.",
-                   null);
+                   null, false);
 
-    addStringField(keyStoreType, typeBuilder, "keyPassword", "The password used to protect the private key.", null);
-    addStringField(keyStoreType, typeBuilder, "password", "The password used to protect the key store.", null);
-    addStringField(keyStoreType, typeBuilder, "algorithm", "The algorithm used by the key store.", null);
+    addStringField(keyStoreType, typeBuilder, "keyPassword", "The password used to protect the private key.", null, false);
+    addStringField(keyStoreType, typeBuilder, "password", "The password used to protect the key store.", null, false);
+    addStringField(keyStoreType, typeBuilder, "algorithm", "The algorithm used by the key store.", null, false);
 
     type.addField().key("key-store").required(false).value(keyStoreType);
   }

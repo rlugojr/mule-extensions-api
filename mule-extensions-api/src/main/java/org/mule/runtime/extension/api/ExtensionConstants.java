@@ -138,12 +138,37 @@ public final class ExtensionConstants {
   public static final String POOLING_PROFILE_PARAMETER_DESCRIPTION = "Characteristics of the connection pool";
 
   /**
+   * The name of the parameter which configures the dynamic config expiration policy
+   */
+  public static final String DYNAMIC_CONFIG_POLICY_PARAMETER_NAME = "dynamicConfigPolicy";
+
+
+  /**
+   * The name of the parameter which configures the expiration policy
+   */
+  public static final String EXPIRATION_POLICY_PARAMETER_NAME = "expirationPolicy";
+
+  public static final String EXPIRATION_POLICY_DESCRIPTION =
+      "Configures the minimum amount of time that a dynamic configuration instance can remain idle\n" +
+          "before the platform considers it eligible for expiration. This does not mean that the platform\n" +
+          "will expire the instance at the exact moment that it becomes eligible. The platform will actually\n" +
+          "purge the instances when it sees it fit.";
+
+
+  /**
+   * The description of the parameter which disables connection validation
+   */
+  public static final String DYNAMIC_CONFIG_POLICY_DESCRIPTION =
+      "Settings which define how the platform should manage dynamic instances of a configuration element";
+
+  /**
    *
    */
   public static final List<String> INFRASTRUCTURE_PARAMETER_NAMES = asList(TLS_PARAMETER_NAME,
                                                                            POOLING_PROFILE_PARAMETER_NAME,
                                                                            RECONNECTION_STRATEGY_PARAMETER_NAME,
                                                                            REDELIVERY_POLICY_PARAMETER_NAME,
+                                                                           DYNAMIC_CONFIG_POLICY_PARAMETER_NAME,
                                                                            TARGET_PARAMETER_NAME);
 
   private ExtensionConstants() {}

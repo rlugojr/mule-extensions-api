@@ -36,8 +36,9 @@ abstract class InfrastructureTypeBuilder {
                                                 String name,
                                                 String description,
                                                 String defaultValue,
+                                                boolean required,
                                                 String... values) {
-    return addField(objectType, getEnumType(typeBuilder, defaultValue, values), name, description);
+    return addField(objectType, getEnumType(typeBuilder, defaultValue, values), name, description, required);
   }
 
   protected StringTypeBuilder getEnumType(BaseTypeBuilder typeBuilder, String defaultValue, String... values) {
@@ -53,34 +54,37 @@ abstract class InfrastructureTypeBuilder {
                                                    BaseTypeBuilder typeBuilder,
                                                    String name,
                                                    String description,
-                                                   Boolean defaultValue) {
+                                                   Boolean defaultValue,
+                                                   boolean required) {
     BooleanTypeBuilder booleanType = typeBuilder.booleanType().id(Boolean.class.getName());
     if (defaultValue != null) {
       booleanType.defaultValue(defaultValue.toString());
     }
 
-    return addField(objectType, booleanType, name, description);
+    return addField(objectType, booleanType, name, description, required);
   }
 
   protected ObjectFieldTypeBuilder addStringField(ObjectTypeBuilder objectType,
                                                   BaseTypeBuilder typeBuilder,
                                                   String name,
                                                   String description,
-                                                  String defaultValue) {
+                                                  String defaultValue,
+                                                  boolean required) {
     final StringTypeBuilder stringType = typeBuilder.stringType().id(String.class.getName());
 
     if (defaultValue != null) {
       stringType.defaultValue(String.valueOf(defaultValue));
     }
 
-    return addField(objectType, stringType, name, description);
+    return addField(objectType, stringType, name, description, required);
   }
 
   protected ObjectFieldTypeBuilder addIntField(ObjectTypeBuilder objectType,
                                                BaseTypeBuilder typeBuilder,
                                                String name,
                                                String description,
-                                               Integer defaultValue) {
+                                               Integer defaultValue,
+                                               boolean required) {
     final NumberTypeBuilder intType = typeBuilder.numberType()
         .integer()
         .id(Integer.class.getName());
@@ -89,14 +93,15 @@ abstract class InfrastructureTypeBuilder {
       intType.defaultValue(String.valueOf(defaultValue));
     }
 
-    return addField(objectType, intType, name, description);
+    return addField(objectType, intType, name, description, required);
   }
 
   protected ObjectFieldTypeBuilder addLongField(ObjectTypeBuilder objectType,
                                                 BaseTypeBuilder typeBuilder,
                                                 String name,
                                                 String description,
-                                                Long defaultValue) {
+                                                Long defaultValue,
+                                                boolean required) {
 
     final NumberTypeBuilder longType = typeBuilder.numberType()
         .integer()
@@ -106,11 +111,11 @@ abstract class InfrastructureTypeBuilder {
       longType.defaultValue(String.valueOf(defaultValue));
     }
 
-    return addField(objectType, longType, name, description);
+    return addField(objectType, longType, name, description, required);
   }
 
   protected ObjectFieldTypeBuilder addField(ObjectTypeBuilder objectType, TypeBuilder typeBuilder, String name,
-                                            String description) {
-    return objectType.addField().key(name).description(description).required(false).value(typeBuilder.build());
+                                            String description, boolean required) {
+    return objectType.addField().key(name).description(description).required(required).value(typeBuilder.build());
   }
 }

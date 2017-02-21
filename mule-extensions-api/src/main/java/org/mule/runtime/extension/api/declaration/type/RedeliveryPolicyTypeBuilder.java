@@ -43,27 +43,27 @@ public final class RedeliveryPolicyTypeBuilder extends InfrastructureTypeBuilder
                 MAX_REDELIVERY_COUNT,
                 "The maximum number of times a message can be redelivered and processed unsuccessfully before triggering "
                     + "process-failed-message",
-                5);
+                5, false);
 
     addBooleanField(objectType, typeBuilder,
                     USE_SECURE_HASH,
                     "Whether to use a secure hash algorithm to identify a redelivered message",
-                    true);
+                    true, false);
     addStringField(objectType, typeBuilder,
                    MESSAGE_DIGEST_ALGORITHM,
                    "The secure hashing algorithm to use. If not set, the default is SHA-256.",
-                   null);
+                   null, false);
 
     addStringField(objectType, typeBuilder,
                    ID_EXPRESSION,
                    "Defines one or more expressions to use to determine when a message has been redelivered. "
                        + "This property may only be set if useSecureHash is false.",
-                   null);
+                   null, false);
 
     addStringField(objectType, typeBuilder,
                    OBJECT_STORE_REF,
                    "The object store where the redelivery counter for each message is going to be stored.",
-                   null);
+                   null, false);
 
     return objectType.build();
   }

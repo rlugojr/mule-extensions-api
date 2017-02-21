@@ -58,6 +58,7 @@ import org.mule.runtime.extension.api.model.parameter.ImmutableParameterGroupMod
 import org.mule.runtime.extension.api.model.parameter.ImmutableParameterModel;
 import org.mule.runtime.extension.api.model.source.ImmutableSourceCallbackModel;
 import org.mule.runtime.extension.api.model.source.ImmutableSourceModel;
+import org.mule.runtime.extension.internal.loader.enricher.ConfigDeclarationEnricher;
 import org.mule.runtime.extension.internal.loader.enricher.ConnectionProviderDeclarationEnricher;
 import org.mule.runtime.extension.internal.loader.enricher.ContentParameterDeclarationEnricher;
 import org.mule.runtime.extension.internal.loader.enricher.ExecutionTypeDeclarationEnricher;
@@ -117,6 +118,7 @@ public final class ExtensionModelFactory {
                                                     new ExtensionTypesDeclarationEnricher(),
                                                     new XmlDeclarationEnricher(),
                                                     new TargetParameterDeclarationEnricher(),
+                                                    new ConfigDeclarationEnricher(),
                                                     new ConnectionProviderDeclarationEnricher(),
                                                     new SourceDeclarationEnricher(),
                                                     new TransactionalDeclarationEnricher(),

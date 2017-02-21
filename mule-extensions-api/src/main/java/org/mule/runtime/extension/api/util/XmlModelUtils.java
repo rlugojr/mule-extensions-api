@@ -72,6 +72,12 @@ public final class XmlModelUtils {
   public static final QName MULE_ABSTRACT_STREAMING_STRATEGY_QNAME =
       new QName(MULE_NAMESPACE_SCHEMA_LOCATION, "abstract-streaming-strategy", MULE_PREFIX);
 
+  /**
+   * {@link QName} for dynamic config policy
+   */
+  public static final QName MULE_DYNAMIC_CONFIG_POLICY_TYPE_QNAME =
+          new QName(MULE_NAMESPACE_SCHEMA_LOCATION, "dynamic-config-policy", MULE_PREFIX);
+
   public static XmlDslModel createXmlLanguageModel(Xml xml, String extensionName, String extensionVersion) {
     String namespace = calculateValue(xml, () -> xml.namespace(), () -> defaultNamespace(extensionName));
     String namespaceLocation = calculateValue(xml, () -> xml.namespaceLocation(), () -> buildDefaultLocation(namespace));
