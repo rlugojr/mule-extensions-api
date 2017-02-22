@@ -6,8 +6,6 @@ public @interface AuthorizationCode {
 
     String authorizationUrl();
 
-    String verifierRegex() default "code=([^&]+)";
-
     String accessTokenExpr() default "#[(payload match /.*\"access_token\"[ ]*:[ ]*\"([^\\\"]*)\".*/)[1]]";
 
     String expirationRegex() default "#[(payload match /.*\"expires_in\"[ ]*:[ ]*\"([^\\\"]*)\".*/)[1]]";

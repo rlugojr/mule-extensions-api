@@ -6,18 +6,23 @@
  */
 package org.mule.runtime.extension.api.connectivity;
 
+import static org.mule.runtime.api.connection.ConnectionValidationResult.failure;
+import static org.mule.runtime.api.connection.ConnectionValidationResult.success;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.api.connection.ConnectionValidationResult;
 import org.mule.runtime.extension.api.annotation.connectivity.oauth.AuthorizationCode;
 import org.mule.runtime.extension.api.annotation.connectivity.oauth.OAuthCallbackParameter;
+import org.mule.runtime.extension.api.annotation.connectivity.oauth.OAuthConsumerKey;
+import org.mule.runtime.extension.api.annotation.connectivity.oauth.OAuthConsumerSecret;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.connectivity.oauth.AuthorizationCodeState;
 
 @AuthorizationCode(
     authorizationUrl = "https://login.salesforce.com/services/oauth2/authorize",
     accessTokenUrl = "https://login.salesforce.com/services/oauth2/token")
-public class OAuth2ConnectionProvider<C> implements ConnectionProvider<C> {
+public class SalesforceOAuthConnectionProvider<C> implements ConnectionProvider<C> {
 
   /**
    * Your application's client identifier (consumer key in Remote Access Detail).
@@ -59,21 +64,25 @@ public class OAuth2ConnectionProvider<C> implements ConnectionProvider<C> {
   @OAuthCallbackParameter(expression = "#[payload.id]")
   private String userId;
 
-  
+
+  private AuthorizationCodeState state;
 
 
   @Override
   public C connect() throws ConnectionException {
+    System.out.println(state.getAccessToken());
     return null;
   }
 
-  @Override
   public void disconnect(C connection) {
 
   }
 
   @Override
   public ConnectionValidationResult validate(C connection) {
-    return null;
+    if (userId == null) {
+      return failure("bleh", new IllegalArgumentException());
+    }
+    return success();
   }
 }
