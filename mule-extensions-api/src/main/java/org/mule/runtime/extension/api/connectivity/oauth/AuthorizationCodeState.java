@@ -13,17 +13,19 @@ public interface AuthorizationCodeState {
 
   String getAccessToken();
 
+  Optional<String> getRefreshToken();
+
   String getResourceOwnerId();
 
   String getAuthorizationUrl();
 
   String getTokenUrl();
 
-  Optional<String> getRefreshToken();
+  String getConsumerKey();
+
+  String getConsumerSecret();
 
   Optional<String> getExpiresIn();
 
   Optional<String> getState();
-
-  
 }
