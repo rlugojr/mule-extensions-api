@@ -12,8 +12,6 @@ import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.api.connection.ConnectionValidationResult;
 import org.mule.runtime.extension.api.annotation.connectivity.oauth.AuthorizationCode;
 import org.mule.runtime.extension.api.annotation.connectivity.oauth.OAuthCallbackValue;
-import org.mule.runtime.extension.api.annotation.connectivity.oauth.OAuthConsumerKey;
-import org.mule.runtime.extension.api.annotation.connectivity.oauth.OAuthConsumerSecret;
 import org.mule.runtime.extension.api.annotation.connectivity.oauth.OAuthParameter;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
@@ -26,17 +24,6 @@ import java.text.MessageFormat;
     accessTokenUrl = "https://login.salesforce.com/services/oauth2/token")
 public class SalesforceOAuthConnectionProvider<C> implements ConnectionProvider<C> {
 
-  /**
-   * Your application's client identifier (consumer key in Remote Access Detail).
-   */
-  @OAuthConsumerKey
-  private String consumerKey;
-
-  /**
-   * Your application's client secret (consumer secret in Remote Access Detail).
-   */
-  @OAuthConsumerSecret
-  private String consumerSecret;
 
   @Parameter
   @Optional(defaultValue = "34.0")

@@ -12,4 +12,6 @@ public @interface AuthorizationCode {
 
     String refreshTokenExpr() default "#[(payload match /.*\"refresh_token\"[ ]*:[ ]*\"([^\\\"]*)\".*/)[1]]";
 
+    String defaultScope() default "";
+
 }
